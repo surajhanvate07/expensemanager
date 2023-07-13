@@ -6,5 +6,22 @@
 </head>
 <body>
     <h1>Expenses List Page</h1>
+    <hr/>
+    <table border="1">
+        <thead>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Date</th>
+        </thead>
+        <tbody>
+            <tr th:each="expense : ${expenses}">
+                <th th:text="${expense.name}"></th>
+                <th th:text="${expense.description}"></th>
+                <th th:text="${expense.amount}"></th>
+                <th th:text="${expense.dateString}"></th>
+            </tr>
+        </tbody>
+    </table>
 </body>
 </html>

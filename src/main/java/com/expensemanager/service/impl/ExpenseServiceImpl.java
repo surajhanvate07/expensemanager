@@ -4,10 +4,12 @@ import com.expensemanager.dto.ExpenseDTO;
 import com.expensemanager.entity.Expense;
 import com.expensemanager.repository.ExpenseRepository;
 import com.expensemanager.service.ExpenseService;
+import com.expensemanager.util.DateTimeUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,13 +24,16 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public List<ExpenseDTO> getAllExpenses() {
-        List<Expense> expenses =  expenseRepository.findAll();
+        List<Expense> expenses = expenseRepository.findAll();
         List<ExpenseDTO> expenseDTOS = expenses.stream().map(this::mapToDTO).collect(Collectors.toList());
 
         return expenseDTOS;
     }
 
     private ExpenseDTO mapToDTO(Expense expense) {
-        return modelMapper.map(expense, ExpenseDTO.class);
+        ExpenseDTO expenseDTO = modelMapper.map(expense, ExpenseDTO.class);
+        expenseDTO.setDateString(DateTimeUtil.convertDateToString(expenseDTO.getDate()));
+
+        return expenseDTO;
     }
 }
