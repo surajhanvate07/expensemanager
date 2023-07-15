@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Date;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -42,6 +43,12 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         // map the entity to dto
         return mapToDTO(newExpense);
+    }
+
+    @Override
+    public void deleteExpenseById(String Id) {
+        Expense oldExpense = expenseRepository.findByExpenseId(Id).orElseThrow(() -> new RuntimeException("Expense not found with Id :"+Id));
+        expenseRepository.delete(oldExpense);
     }
 
     private ExpenseDTO mapToDTO(Expense expense) {

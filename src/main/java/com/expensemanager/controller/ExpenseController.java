@@ -5,9 +5,7 @@ import com.expensemanager.service.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.util.List;
@@ -35,6 +33,13 @@ public class ExpenseController {
     public String saveOrUpdateExpenseDetails(@ModelAttribute("expense") ExpenseDTO expenseDTO) throws ParseException {
         expenseService.saveExpenseDetails(expenseDTO);
 
+        return "redirect:/expenses";
+    }
+
+    @GetMapping("/deleteExpense/{expenseId}")
+    public String deleteExpense(@PathVariable("expenseId") String expenseId) {
+        expenseService.deleteExpenseById(expenseId);
+        System.out.println(expenseId);
         return "redirect:/expenses";
     }
 }
