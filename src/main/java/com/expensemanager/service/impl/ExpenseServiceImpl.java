@@ -46,9 +46,18 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
+    public ExpenseDTO getExpenseById(String Id) {
+        return mapToDTO(getExpense(Id));
+    }
+
+    @Override
     public void deleteExpenseById(String Id) {
-        Expense oldExpense = expenseRepository.findByExpenseId(Id).orElseThrow(() -> new RuntimeException("Expense not found with Id :"+Id));
+        Expense oldExpense =  getExpense(Id);
         expenseRepository.delete(oldExpense);
+    }
+
+    private Expense getExpense(String Id) {
+        return expenseRepository.findByExpenseId(Id).orElseThrow(() -> new RuntimeException("Expense not found with Id :"+Id));
     }
 
     private ExpenseDTO mapToDTO(Expense expense) {
@@ -61,7 +70,9 @@ public class ExpenseServiceImpl implements ExpenseService {
     private Expense mapToEntity(ExpenseDTO expenseDTO) throws ParseException {
         Expense expense = modelMapper.map(expenseDTO, Expense.class);
         // generate the expense id
-        expense.setExpenseId(UUID.randomUUID().toString());
+        if(expense.getExpenseId() == null) {
+            expense.setExpenseId(UUID.randomUUID().toString());
+        }
         // set the expense date
         expense.setDate(DateTimeUtil.convertStringToDate(expenseDTO.getDateString()));
         return expense;

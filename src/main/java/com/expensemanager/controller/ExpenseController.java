@@ -1,6 +1,7 @@
 package com.expensemanager.controller;
 
 import com.expensemanager.dto.ExpenseDTO;
+import com.expensemanager.entity.Expense;
 import com.expensemanager.service.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -41,5 +42,11 @@ public class ExpenseController {
         expenseService.deleteExpenseById(expenseId);
         System.out.println(expenseId);
         return "redirect:/expenses";
+    }
+    @GetMapping("/updateExpense/{expenseId}")
+    public String updateExpense(@PathVariable("expenseId") String expenseId, Model model) {
+        ExpenseDTO expenseDTO = expenseService.getExpenseById(expenseId);
+        model.addAttribute("expense", expenseDTO);
+        return "expense-form";
     }
 }

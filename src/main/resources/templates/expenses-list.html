@@ -27,6 +27,8 @@
                 <td>
                     <a th:href="@{'/deleteExpense/'+${expense.expenseId}}"
                     onclick="return confirm('Are you sure want to delete the expense?');">Delete</a>
+                    |
+                    <a th:href="@{'/updateExpense/'+${expense.expenseId}}">Update</a>
                 </td>
             </tr>
         </tbody>
