@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.text.ParseException;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,10 +32,31 @@ public class ExpenseServiceImpl implements ExpenseService {
         return expenseDTOS;
     }
 
+    @Override
+    public ExpenseDTO saveExpenseDetails(ExpenseDTO expenseDTO) throws ParseException {
+        // map the dto to entity
+        Expense newExpense = mapToEntity(expenseDTO);
+
+        // save to database
+        newExpense = expenseRepository.save(newExpense);
+
+        // map the entity to dto
+        return mapToDTO(newExpense);
+    }
+
     private ExpenseDTO mapToDTO(Expense expense) {
         ExpenseDTO expenseDTO = modelMapper.map(expense, ExpenseDTO.class);
         expenseDTO.setDateString(DateTimeUtil.convertDateToString(expenseDTO.getDate()));
 
         return expenseDTO;
+    }
+
+    private Expense mapToEntity(ExpenseDTO expenseDTO) throws ParseException {
+        Expense expense = modelMapper.map(expenseDTO, Expense.class);
+        // generate the expense id
+        expense.setExpenseId(UUID.randomUUID().toString());
+        // set the expense date
+        expense.setDate(DateTimeUtil.convertStringToDate(expenseDTO.getDateString()));
+        return expense;
     }
 }
