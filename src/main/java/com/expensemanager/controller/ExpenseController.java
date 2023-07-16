@@ -4,9 +4,12 @@ import com.expensemanager.dto.ExpenseDTO;
 import com.expensemanager.dto.ExpenseFilterDTO;
 import com.expensemanager.entity.Expense;
 import com.expensemanager.service.ExpenseService;
+import com.expensemanager.validator.ExpenseValidator;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -36,9 +39,14 @@ public class ExpenseController {
     }
 
     @PostMapping("/saveOrUpdateExpense")
-    public String saveOrUpdateExpenseDetails(@ModelAttribute("expense") ExpenseDTO expenseDTO) throws ParseException {
-        expenseService.saveExpenseDetails(expenseDTO);
+    public String saveOrUpdateExpenseDetails(@Valid @ModelAttribute("expense") ExpenseDTO expenseDTO, BindingResult result) throws ParseException {
+        new ExpenseValidator().validate(expenseDTO, result);
 
+        if (result.hasErrors()) {
+            return "expense-form";
+        }
+
+        expenseService.saveExpenseDetails(expenseDTO);
         return "redirect:/expenses";
     }
 
@@ -48,6 +56,7 @@ public class ExpenseController {
         System.out.println(expenseId);
         return "redirect:/expenses";
     }
+
     @GetMapping("/updateExpense/{expenseId}")
     public String updateExpense(@PathVariable("expenseId") String expenseId, Model model) {
         ExpenseDTO expenseDTO = expenseService.getExpenseById(expenseId);
