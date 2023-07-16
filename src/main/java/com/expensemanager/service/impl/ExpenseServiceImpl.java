@@ -6,13 +6,16 @@ import com.expensemanager.entity.Expense;
 import com.expensemanager.repository.ExpenseRepository;
 import com.expensemanager.service.ExpenseService;
 import com.expensemanager.util.DateTimeUtil;
+import com.ibm.icu.text.NumberFormat;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -79,6 +82,17 @@ public class ExpenseServiceImpl implements ExpenseService {
         return expenseDTOList;
     }
 
+    @Override
+    public String totalExpense(List<ExpenseDTO> expenseDTOS) {
+        BigDecimal sum = new BigDecimal(0);
+        BigDecimal total = expenseDTOS.stream().map(o -> o.getAmount().add(sum))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(new Locale("en","in"));
+
+        return numberFormat.format(total).substring(1);
+    }
+
     private Expense getExpense(String Id) {
         return expenseRepository.findByExpenseId(Id).orElseThrow(() -> new RuntimeException("Expense not found with Id :" + Id));
     }
@@ -93,7 +107,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     private Expense mapToEntity(ExpenseDTO expenseDTO) throws ParseException {
         Expense expense = modelMapper.map(expenseDTO, Expense.class);
         // generate the expense id
-        if (expense.getExpenseId() == null) {
+        if (expense.getExpenseId().isEmpty()) {
             expense.setExpenseId(UUID.randomUUID().toString());
         }
         // set the expense date

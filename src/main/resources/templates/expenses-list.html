@@ -9,6 +9,9 @@
 <body>
     <h1>List of Expenses</h1>
     <hr/>
+    <div>
+        <h2>You have spent total of  <span th:text="'&#8377;'+${totalExpense}"></span></h2>
+    </div>
     <form th:object="${filter}" method="get" th:action="@{/filterExpenses}">
         Search by Keyword: <input type="text" placeholder="Enter keyword" th:field="*{keyword}"/>
         <select th:field="*{sortBy}">

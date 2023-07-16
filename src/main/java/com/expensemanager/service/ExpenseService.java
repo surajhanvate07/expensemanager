@@ -4,6 +4,7 @@ import com.expensemanager.dto.ExpenseDTO;
 import com.expensemanager.dto.ExpenseFilterDTO;
 import com.expensemanager.entity.Expense;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.List;
 
@@ -17,4 +18,6 @@ public interface ExpenseService {
     public void deleteExpenseById(String Id);
 
     public List<ExpenseDTO> getFilteredExpenses(ExpenseFilterDTO expenseFilterDTO) throws ParseException;
+
+    public String totalExpense(List<ExpenseDTO> expenseDTOS);
 }

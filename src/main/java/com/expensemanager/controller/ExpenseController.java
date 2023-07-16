@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.List;
 
@@ -21,8 +22,10 @@ public class ExpenseController {
     @GetMapping("/expenses")
     public String showExpenseList(Model model) {
         List<ExpenseDTO> expenseDTOList = expenseService.getAllExpenses();
+        String totalExpense = expenseService.totalExpense(expenseDTOList);
         model.addAttribute("expenses", expenseDTOList);
         model.addAttribute("filter", new ExpenseFilterDTO());
+        model.addAttribute("totalExpense", totalExpense);
         return "expenses-list";
     }
 
