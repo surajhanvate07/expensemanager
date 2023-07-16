@@ -1,6 +1,7 @@
 package com.expensemanager.service.impl;
 
 import com.expensemanager.dto.ExpenseDTO;
+import com.expensemanager.dto.ExpenseFilterDTO;
 import com.expensemanager.entity.Expense;
 import com.expensemanager.repository.ExpenseRepository;
 import com.expensemanager.service.ExpenseService;
@@ -52,12 +53,34 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     public void deleteExpenseById(String Id) {
-        Expense oldExpense =  getExpense(Id);
+        Expense oldExpense = getExpense(Id);
         expenseRepository.delete(oldExpense);
     }
 
+    @Override
+    public List<ExpenseDTO> getFilteredExpenses(ExpenseFilterDTO expenseFilterDTO) throws ParseException {
+        String keyword = expenseFilterDTO.getKeyword();
+        String sortBy = expenseFilterDTO.getSortBy();
+        String startDateString = expenseFilterDTO.getStartDate();
+        String endDateString = expenseFilterDTO.getEndDate();
+
+        Date startDate = !startDateString.isEmpty() ? DateTimeUtil.convertStringToDate(startDateString) : new Date(0);
+        Date endDate = !endDateString.isEmpty() ? DateTimeUtil.convertStringToDate(endDateString) : new Date(System.currentTimeMillis());
+
+        List<Expense> filteredList = expenseRepository.findByNameContainingAndDateBetween(keyword, startDate, endDate);
+        List<ExpenseDTO> expenseDTOList = filteredList.stream().map(this::mapToDTO).collect(Collectors.toList());
+
+        if (sortBy.equals("date")) {
+            expenseDTOList.sort((e1, e2) -> e2.getDate().compareTo(e1.getDate()));
+        } else {
+            expenseDTOList.sort((e1, e2) -> e2.getAmount().compareTo(e1.getAmount()));
+        }
+
+        return expenseDTOList;
+    }
+
     private Expense getExpense(String Id) {
-        return expenseRepository.findByExpenseId(Id).orElseThrow(() -> new RuntimeException("Expense not found with Id :"+Id));
+        return expenseRepository.findByExpenseId(Id).orElseThrow(() -> new RuntimeException("Expense not found with Id :" + Id));
     }
 
     private ExpenseDTO mapToDTO(Expense expense) {
@@ -70,7 +93,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     private Expense mapToEntity(ExpenseDTO expenseDTO) throws ParseException {
         Expense expense = modelMapper.map(expenseDTO, Expense.class);
         // generate the expense id
-        if(expense.getExpenseId() == null) {
+        if (expense.getExpenseId() == null) {
             expense.setExpenseId(UUID.randomUUID().toString());
         }
         // set the expense date
