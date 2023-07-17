@@ -4,7 +4,7 @@ const validateNumber = function(elem) {
 	if(validNumber.test(elem.value)) {
 		amountValid = elem.value;
 	} else {
-		elem.value = amountValid;
+		elem.value = amountValid;A
 	}
 }
 $(function() {
