@@ -4,6 +4,7 @@ import com.expensemanager.dto.ExpenseDTO;
 import com.expensemanager.dto.ExpenseFilterDTO;
 import com.expensemanager.entity.Expense;
 import com.expensemanager.entity.User;
+import com.expensemanager.exception.ExpenseNotFoundException;
 import com.expensemanager.repository.ExpenseRepository;
 import com.expensemanager.service.ExpenseService;
 import com.expensemanager.service.UserService;
@@ -103,7 +104,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     private Expense getExpense(String Id) {
-        return expenseRepository.findByExpenseId(Id).orElseThrow(() -> new RuntimeException("Expense not found with Id :" + Id));
+        return expenseRepository.findByExpenseId(Id).orElseThrow(() -> new ExpenseNotFoundException("Expense not found with Id :" + Id));
     }
 
     private ExpenseDTO mapToDTO(Expense expense) {
