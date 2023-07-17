@@ -10,6 +10,9 @@
     <h1>List of Expenses</h1>
     <hr/>
     <div>
+        <a th:href="@{/logout}">Logout</a>
+    </div>
+    <div>
         <h2>You have spent total of  <span th:text="'&#8377;'+${totalExpense}"></span></h2>
     </div>
     <form th:object="${filter}" method="get" th:action="@{/filterExpenses}">
