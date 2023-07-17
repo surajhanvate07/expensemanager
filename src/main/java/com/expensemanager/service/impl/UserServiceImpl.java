@@ -6,6 +6,7 @@ import com.expensemanager.repository.UserRepository;
 import com.expensemanager.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -19,8 +20,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Override
     public UserDTO saveUser(UserDTO userDTO) {
+        userDTO.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
         User newUser = mapToEntity(userDTO);
         newUser.setUserId(UUID.randomUUID().toString());
         userRepository.save(newUser);
