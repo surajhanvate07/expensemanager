@@ -38,8 +38,7 @@ public class UserServiceImpl implements UserService {
     public User getLoggedInUser() {
        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
        String loggedInUserEmail = auth.getName();
-        System.out.println(loggedInUserEmail);
-        return userRepository.getUserByUserName(loggedInUserEmail);
+       return userRepository.getUserByUserName(loggedInUserEmail);
     }
 
     private UserDTO mapToDTO(User user) {

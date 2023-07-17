@@ -2,9 +2,7 @@ package com.expensemanager.service;
 
 import com.expensemanager.dto.ExpenseDTO;
 import com.expensemanager.dto.ExpenseFilterDTO;
-import com.expensemanager.entity.Expense;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.List;
 

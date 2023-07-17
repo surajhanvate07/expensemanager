@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="https://thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Error Page</title>
@@ -7,5 +7,6 @@
 <body>
     <h1>Under Construction</h1>
     <p>The page you are looking for is under construction, please come back later</p>
+    <a th:href="@{/expenses}">Back to Expenses</a>
 </body>
 </html>

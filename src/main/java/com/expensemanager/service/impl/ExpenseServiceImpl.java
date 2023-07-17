@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -37,7 +38,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public List<ExpenseDTO> getAllExpenses() {
         User user = userService.getLoggedInUser();
-        List<Expense> expenses = expenseRepository.findByUserId(user.getId());
+        List<Expense> expenses = expenseRepository.findByDateBetweenAndUserId(Date.valueOf(LocalDate.now().withDayOfMonth(1)), Date.valueOf(LocalDate.now()), user.getId());
         List<ExpenseDTO> expenseDTOS = expenses.stream().map(this::mapToDTO).collect(Collectors.toList());
 
         return expenseDTOS;
@@ -47,6 +48,11 @@ public class ExpenseServiceImpl implements ExpenseService {
     public ExpenseDTO saveExpenseDetails(ExpenseDTO expenseDTO) throws ParseException {
         // map the dto to entity
         Expense newExpense = mapToEntity(expenseDTO);
+
+        // handle the future date expense
+        if(!newExpense.getDate().before(new java.util.Date())) {
+            throw new RuntimeException("Future date is not allowed");
+        }
 
         // saving user to the expense object
         newExpense.setUser(userService.getLoggedInUser());
@@ -95,16 +101,15 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public String totalExpense(List<ExpenseDTO> expenseDTOS) {
         BigDecimal sum = new BigDecimal(0);
-        BigDecimal total = expenseDTOS.stream().map(o -> o.getAmount().add(sum))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal total = expenseDTOS.stream().map(o -> o.getAmount().add(sum)).reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(new Locale("en","in"));
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(new Locale("en", "in"));
 
         return numberFormat.format(total).substring(1);
     }
 
     private Expense getExpense(String Id) {
-        return expenseRepository.findByExpenseId(Id).orElseThrow(() -> new ExpenseNotFoundException("Expense not found with Id :" + Id));
+        return expenseRepository.findByExpenseId(Id).orElseThrow(() -> new ExpenseNotFoundException("Expense not found with Id : " + Id));
     }
 
     private ExpenseDTO mapToDTO(Expense expense) {

@@ -16,4 +16,9 @@ public class ExpenseFilterDTO {
     private String startDate;
 
     private String endDate;
+
+    public ExpenseFilterDTO(String startDate, String endDate) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 }

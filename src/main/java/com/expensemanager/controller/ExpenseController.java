@@ -2,17 +2,19 @@ package com.expensemanager.controller;
 
 import com.expensemanager.dto.ExpenseDTO;
 import com.expensemanager.dto.ExpenseFilterDTO;
-import com.expensemanager.entity.Expense;
 import com.expensemanager.service.ExpenseService;
+import com.expensemanager.util.DateTimeUtil;
 import com.expensemanager.validator.ExpenseValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.List;
 
@@ -27,7 +29,7 @@ public class ExpenseController {
         List<ExpenseDTO> expenseDTOList = expenseService.getAllExpenses();
         String totalExpense = expenseService.totalExpense(expenseDTOList);
         model.addAttribute("expenses", expenseDTOList);
-        model.addAttribute("filter", new ExpenseFilterDTO());
+        model.addAttribute("filter", new ExpenseFilterDTO(DateTimeUtil.getCurrentMonthStartDate(), DateTimeUtil.getCurrentMonthDate()));
         model.addAttribute("totalExpense", totalExpense);
         return "expenses-list";
     }
@@ -53,7 +55,6 @@ public class ExpenseController {
     @GetMapping("/deleteExpense/{expenseId}")
     public String deleteExpense(@PathVariable("expenseId") String expenseId) {
         expenseService.deleteExpenseById(expenseId);
-        System.out.println(expenseId);
         return "redirect:/expenses";
     }
 
