@@ -2,9 +2,11 @@ package com.expensemanager.controller;
 
 import com.expensemanager.dto.UserDTO;
 import com.expensemanager.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +17,7 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
-    @GetMapping({"/login","/"})
+    @GetMapping({"/login", "/"})
     public String showLoginForm() {
         return "login";
     }
@@ -27,8 +29,10 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@ModelAttribute("user") UserDTO userDTO, Model model) {
-        System.out.println("User Details: "+userDTO);
+    public String register(@Valid @ModelAttribute("user") UserDTO userDTO, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "register";
+        }
         userService.saveUser(userDTO);
         model.addAttribute("successMsg", true);
         return "login";
