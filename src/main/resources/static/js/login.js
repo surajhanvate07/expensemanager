@@ -5,7 +5,7 @@ $(function() {
 	if($loginForm.length) {
 		$loginForm.validate({
 			rules: {
-				email:{
+				username:{
 					required: true
 				},
 				password:{
@@ -13,12 +13,17 @@ $(function() {
 				}
 			},
 			messages: {
-				email: {
+				username: {
 					required: 'Please enter the email'
 				},
 				password: {
 					required : 'Please enter the password'
 				}
+			},
+			errorElement:'em',
+			errorPlacement: function(error, element) {
+				error.addClass('help-block');
+				error.insertAfter(element);
 			}
 		})
 	}
